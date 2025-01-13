@@ -1,10 +1,11 @@
-name: "EKYC Project"
+name: EKYC Project Test
 
 on:
   push:
     branches:
       - 'dev'
 
+  pull_request:
     branches:
       - 'main'
 
