@@ -124,11 +124,30 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
-#STATICFILES_DIR = [BASE_DIR / "static_assets"]
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+#custom user model
+AUTH_USER_MODEL = "ekyc.CustomUser"
+
+#setup the authentication backend attributes for username to email kinda stuff.
+# AUTHENTICATION_BACKENDS = [
+#     "ekyc.backends.EmailBackend", 
+#     "django.contrib.auth.backends.ModelBackend",
+# ]
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/ekyc_home/"
+
+# AUTHENTICATION_BACKENDS = [
+#     "django.contrib.auth.backends.ModelBackend",
+#     "ekyc.auth_backend.EmailBackend",
+# ]
