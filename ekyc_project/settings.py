@@ -11,21 +11,29 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+is_envfile = False
+env_file = [".env.local", ".env.prod", ".env.dev", ".env"]
+for file in env_file:
+    if os.path.isfile(os.path.join(BASE_DIR, file)):
+        is_envfile = True
+        load_dotenv(os.path.join(BASE_DIR, file))
+        break
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(clx997ahlo1cm@$w5sq+aiki7bpqid2a@h@&tjy=2)^^69(2s"
-
+SECRET_KEY = os.environ.get("SECRET_KEY") 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get("DEBUG", 1))
 
 ALLOWED_HOSTS = []
 
@@ -81,11 +89,11 @@ WSGI_APPLICATION = "ekyc_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "ekyc",
-        "USER": "root",
-        "PASSWORD": "root.123",
-        "HOST": "localhost",
-        "PORT": "3306",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
     }
 }
 
