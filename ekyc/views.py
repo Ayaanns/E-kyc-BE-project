@@ -15,6 +15,7 @@ from django.views.generic import CreateView
 
 #USER DEFINED MODULES (CREATED)
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from ekyc import logger
 
 User = get_user_model()
 
@@ -34,6 +35,7 @@ from django.views.generic import CreateView
 """
 
 def signup_view(request):
+    logger.info("into the signup page view")
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -85,6 +87,7 @@ def signup_view(request):
 #
 # #login route here
 class Login(SuccessMessageMixin, LoginView):  # Inherit from LoginView instead of CreateView
+    logger.info("INTO THE LOGIN PAGE RIGHT NOW!")
     template_name = 'login.html'
     success_url = reverse_lazy('ekyc_home')
     success_message = "Successfully logged in!"  # Add a success message
@@ -101,6 +104,7 @@ class Login(SuccessMessageMixin, LoginView):  # Inherit from LoginView instead o
 #--MAIN FEATURS HERE ---------------------------------
 @login_required
 def process_video(request):
+    logger.info("INTO THE process_video PAGE RIGHT NOW!")
     if request.method == "POST":
         video_feed = request.FILES.get('video')
         liveness_score = 0.95
@@ -110,6 +114,7 @@ def process_video(request):
 
 @login_required
 def process_id_card(request):
+    logger.info("INTO THE process_id_card PAGE RIGHT NOW!")
     if request.method == "POST":
         id_image = request.FILES.get('id_image')
         result = "Valid ID"

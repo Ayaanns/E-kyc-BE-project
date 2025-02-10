@@ -26,6 +26,63 @@ for file in env_file:
         load_dotenv(os.path.join(BASE_DIR, file))
         break
 
+if not os.path.exists(os.path.join(BASE_DIR, "logs", "console.log")):
+    with open("console.log", "w") as f:
+        f.close()
+
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "INFO",  # Capture all levels of logs (DEBUG and above)
+            "class": "logging.StreamHandler",  # Write logs to the console
+            #"filename": os.path.join(BASE_DIR, "console.log"),  # Log file path
+            "formatter": "standard",  # Format logs for simplicity
+        },
+        "output": {
+            "level": "DEBUG", #caputure all levels of logs (DEBUG and above)
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "output.log"),
+            "maxBytes": 50000,
+            "backupCount": 2,
+            "formatter": "simple",
+        }
+    },
+    "formatters": {
+        "standard": {
+            "format": "%(message)s",  # Simple output format
+        },
+        "simple": {
+            "format": "%(asctime)s - %(levelname)s -> %(message)s",  # Simple output format
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],  # Redirect Django logs to the file handler
+            "level": "DEBUG",  # Capture DEBUG and above
+            "propagate": True,  # Prevent duplicate logging
+        },
+        "django.server": {
+            "handlers": ["console"],  # Redirect server-related logs (e.g., HTTP requests)
+            "level": "DEBUG",  # Capture INFO and above
+            "propagate": True,
+        },
+        "ekyc": {
+            "handlers": ["console", "output"],
+            "level": "INFO",
+        }
+    },
+    "root": {
+        "handlers": ["console"],  # Capture all logs from the root logger
+        "level": "DEBUG",
+        "propagate": True,
+    },
+}
+    
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
