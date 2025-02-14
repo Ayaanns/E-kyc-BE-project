@@ -117,6 +117,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    #user defined middleware
+    "ekyc_project.middleware.new_middleware"
 ]
 
 ROOT_URLCONF = "ekyc_project.urls"
@@ -142,7 +145,6 @@ WSGI_APPLICATION = "ekyc_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -153,6 +155,16 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT"),
     }
 }
+
+#Email setup
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("E_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("E_PSWD")
+SERVER_EMAIL = EMAIL_HOST_USER
+#EMAIL_FROM = os.environ.get("E_FROM")
 
 
 # Password validation
