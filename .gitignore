@@ -1,7 +1,21 @@
-env
-ekyc/__pycache__/
-ekyc_project/__pycache__/
+# Virtual Environment
+env/
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code history
+.history/
 .history
-D:\omkar\django_practice\ekyc_project\.history
-*.pyc
+.vscode/
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# Environment variables
 .env
