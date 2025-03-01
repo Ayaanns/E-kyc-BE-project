@@ -1,4 +1,6 @@
 env
-ekyc/__pycache__/*.pyc
-ekyc_project/__pycache__/*.pyc
+ekyc/__pycache__/
+ekyc_project/__pycache__/
+.history/
+*.pyc
 .env
