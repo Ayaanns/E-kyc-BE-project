@@ -21,3 +21,7 @@ class CustomAuthenticationForm(AuthenticationForm):
     #     'class': 'form-control',
     #     'placeholder': 'Enter your password',
     # }))
+
+
+class PinVerificationForm(forms.Form):
+    pin = forms.CharField(max_length=6, min_length=6)

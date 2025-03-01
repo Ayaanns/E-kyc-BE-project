@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .webcam-feed {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .webcam-feed video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .questions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+            max-width: 80%;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .completion-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            background: conic-gradient(#4caf50 0deg, #ddd 0deg);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .completion-circle::after {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .completion-circle span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .transcript-section {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .status-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9em;
+            z-index: 10;
+        }
+
+        .count-badge {
+            display: inline-block;
+            background: #4caf50;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="completion-circle" id="completion-circle">
+                <span>0%</span>
+            </div>
+            <div class="webcam-feed">
+                <video id="webcam" autoplay></video>
+                <div class="status-info">
+                    Wave: <span class="count-badge" id="waveCount">0/2</span>
+                    Blink: <span class="count-badge" id="blinkCount">0/3</span>
+                </div>
+                <div class="questions" id="questions">Please follow the instructions...</div>
+                <canvas id="canvasElement" style="display:none;"></canvas>
+            </div>
+            <div class="transcript-section">
+                <h3>User Transcript</h3>
+                <p id="transcript"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Existing initialization code
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvasElement');
+        const ctx = canvas.getContext('2d');
+        let verificationComplete = false;
+        
+        // Initialize webcam with human verification
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                startVerificationProcess();
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                document.getElementById('messageText').textContent = "Camera access denied";
+            }
+        }
+
+        // Process frames for verification
+        function processFrame() {
+            if (verificationComplete) return;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0);
+                
+                const frameData = canvas.toDataURL('image/jpeg');
+                
+                // Update the fetch URL to match the Django URL pattern
+                fetch('{% url "process_frame" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        frame: frameData
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateVerificationUI(data);
+                    if (!data.phase_complete) {
+                        requestAnimationFrame(processFrame);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    requestAnimationFrame(processFrame);
+                });
+            } else {
+                requestAnimationFrame(processFrame);
+            }
+        }
+
+        // Update UI with verification status
+        function updateVerificationUI(data) {
+            document.getElementById('waveCount').textContent = `${data.wave_count}/2`;
+            document.getElementById('blinkCount').textContent = `${data.blink_count}/3`;
+            document.getElementById('questions').textContent = data.message;
+            
+            // Calculate completion percentage
+            const totalSteps = 5; // 2 waves + 3 blinks
+            const completedSteps = data.wave_count + data.blink_count;
+            const percentage = Math.round((completedSteps / totalSteps) * 100);
+            
+            const circle = document.getElementById('completion-circle');
+            circle.querySelector('span').textContent = percentage + '%';
+            circle.style.background = `conic-gradient(#4caf50 ${percentage * 3.6}deg, #ddd ${percentage * 3.6}deg)`;
+            
+            if (data.phase_complete) {
+                verificationComplete = true;
+                startNLPProcess();
+            }
+        }
+
+        // Existing helper functions
+        function updateProgressCircle(percentage) {
+            const circle = document.getElementById('completion-circle');
+            circle.textContent = percentage + '%';
+            circle.style.background = `conic-gradient(#4caf50 ${percentage * 3.6}deg, #ddd ${percentage * 3.6}deg)`;
+        }
+
+        function updateTranscript(data) {
+            const transcript = document.getElementById('transcript');
+            transcript.textContent = `First Name: ${data.first_name}, Last Name: ${data.last_name}, Age: ${data.age}, Phone: ${data.phone}`;
+        }
+
+        function askQuestion(question) {
+            const questionsDiv = document.getElementById('questions');
+            questionsDiv.textContent = question;
+        }
+
+        function startVerificationProcess() {
+            document.getElementById('messageText').textContent = "Wave your hand to begin";
+            processFrame();
+        }
+
+        // Modified startNLPProcess
+        function startNLPProcess() {
+            document.getElementById('messageText').textContent = "Verification complete! Starting voice recognition...";
+            fetch('/nlp_process/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateTranscript(data);
+                        askQuestion("NLP process complete.");
+                    } else {
+                        askQuestion("NLP process failed.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Start the process
+        document.addEventListener('DOMContentLoaded', (event) => {
+            initCamera();
+        });
+    </script>
+</body>
+</html>

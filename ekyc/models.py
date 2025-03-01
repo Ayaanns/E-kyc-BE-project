@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.utils import timezone
+import random
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -12,11 +14,11 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
+        #extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
-        if not extra_fields.get('is_staff'):
-            raise ValueError("Superuser must have is_staff=True.")
+        # if not extra_fields.get('is_staff'):
+        #     raise ValueError("Superuser must have is_staff=True.")
         if not extra_fields.get('is_superuser'):
             raise ValueError("Superuser must have is_superuser=True.")
 
@@ -26,7 +28,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=150, unique=True)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    pin = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(default=timezone.now)
+    is_verified = models.BooleanField(default=True)
 
     objects = CustomUserManager()
 
@@ -35,6 +40,40 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+    def generate_pin(self):
+        self.pin = str(random.randint(100000, 999999))
+        self.expires_at = timezone.now() + timezone.timedelta(minutes=2)
+        self.save()
+        return self.pin
+
+    def verify_pin(self, entered_pin):
+        if timezone.now() > self.expires_at:
+            return False, "PIN has Expired!"
+
+        if self.pin != entered_pin:
+            return False, "Incorrect PIN!"
+
+        self.is_verified = True
+        self.save()
+        return True, "Email Successfully Verified!"
+
+
+#models for sending the code and receving the code.
+# class SendCode(models.Model): #for sending the code
+#     email = models.OneToOneField(CustomUser, null=True, on_delete=models.CASCADE)
+#     send_code = models.CharField(max_length=20)
+#
+#     def __str__(self):
+#         return self.send_code
+#
+# class ReceivedCode(models.Model): #for sending the code
+#     email = models.OneToOneField(CustomUser, null=True, on_delete=models.CASCADE)
+#     receive_code = models.CharField(max_length=20)
+#
+#     def __str__(self):
+#         return self.receive_code
 
 # Create your models here.
 class KYCSession(models.Model):

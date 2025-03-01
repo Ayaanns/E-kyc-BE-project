@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        .webcam-feed {
+            /* position: relative; */
+            width: 100%;
+            height: auto;
+        }
+
+        .webcam-feed video {
+            /* position: absolute; */
+            width: 105%;
+            height: 110%;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        video {
+            position: relative;
+            top: -19px;
+            left: -17px;
+        }
+
+        /* Overlay container for status indicators */
+        /* .status-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            /* z-index: 10; */
+            padding: 20px;
+            /* background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%); */
+            border-radius: 15px 15px 0 0;
+        } */
+
+        .status-indicators {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        
+        .status-box {
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .verification-message {
+            font-size: 1.5em;
+            color: #4caf50;
+            text-align: center;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .questions {
+            position: absolute;
+            /* bottom: 20px; */
+            /* left: 0;
+            right: 0; */
+            text-align: center;
+            color: rgb(0, 0, 0);
+            background: rgba(255, 255, 255, 0.973);
+            padding: 10px;
+            margin: 0 20px;
+            /* border-radius: 8px; */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="result-feed">
+                <div class="completion-circle" id="completion-circle">0%</div>
+            </div>
+            <div class="webcam-feed">
+                <video id="webcam" autoplay></video>
+                <div class="status-overlay">
+                    <div class="verification-message" id="messageText">Starting verification...</div>
+                    <div class="status-indicators">
+                        <div class="status-box">
+                            Wave count: <span id="waveCount">0</span>/2
+                        </div>
+                        <div class="status-box">
+                            Blink count: <span id="blinkCount">0</span>/3
+                        </div>
+                    </div>
+                </div>
+                <canvas id="canvasElement" style="display:none;"></canvas>
+                <div class="questions" id="questions">Please follow the instructions...</div>
+            </div>
+        </div>
+        <div class="transcript-section">
+            <span class="questions">User Transcript</span>
+            <p id="transcript"></p>
+        </div>
+    </div>
+
+    <script>
+        // Existing initialization code
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvasElement');
+        const ctx = canvas.getContext('2d');
+        let verificationComplete = false;
+        
+        // Initialize webcam with human verification
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                startVerificationProcess();
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                document.getElementById('messageText').textContent = "Camera access denied";
+            }
+        }
+
+        // Process frames for verification
+        function processFrame() {
+            if (verificationComplete) return;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0);
+                
+                const frameData = canvas.toDataURL('image/jpeg');
+                
+                // Update the fetch URL to match the Django URL pattern
+                fetch('{% url "process_frame" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        frame: frameData
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateVerificationUI(data);
+                    if (!data.phase_complete) {
+                        requestAnimationFrame(processFrame);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    requestAnimationFrame(processFrame);
+                });
+            } else {
+                requestAnimationFrame(processFrame);
+            }
+        }
+
+        // Update UI with verification status
+        function updateVerificationUI(data) {
+            document.getElementById('messageText').textContent = data.message;
+            document.getElementById('waveCount').textContent = data.wave_count;
+            document.getElementById('blinkCount').textContent = data.blink_count;
+            
+            // Calculate completion percentage
+            const totalSteps = 5; // 2 waves + 3 blinks
+            const completedSteps = data.wave_count + data.blink_count;
+            const percentage = Math.round((completedSteps / totalSteps) * 100);
+            updateProgressCircle(percentage);
+            
+            if (data.phase_complete) {
+                verificationComplete = true;
+                startNLPProcess();
+            }
+        }
+
+        // Existing helper functions
+        function updateProgressCircle(percentage) {
+            const circle = document.getElementById('completion-circle');
+            circle.textContent = percentage + '%';
+            circle.style.background = `conic-gradient(#4caf50 ${percentage * 3.6}deg, #ddd ${percentage * 3.6}deg)`;
+        }
+
+        function updateTranscript(data) {
+            const transcript = document.getElementById('transcript');
+            transcript.textContent = `First Name: ${data.first_name}, Last Name: ${data.last_name}, Age: ${data.age}, Phone: ${data.phone}`;
+        }
+
+        function askQuestion(question) {
+            const questionsDiv = document.getElementById('questions');
+            questionsDiv.textContent = question;
+        }
+
+        function startVerificationProcess() {
+            document.getElementById('messageText').textContent = "Wave your hand to begin";
+            processFrame();
+        }
+
+        // Modified startNLPProcess
+        function startNLPProcess() {
+            document.getElementById('messageText').textContent = "Verification complete! Starting voice recognition...";
+            fetch('/nlp_process/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateTranscript(data);
+                        askQuestion("NLP process complete.");
+                    } else {
+                        askQuestion("NLP process failed.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Start the process
+        document.addEventListener('DOMContentLoaded', (event) => {
+            initCamera();
+        });
+    </script>
+</body>
+</html>

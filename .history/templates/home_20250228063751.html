@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        .webcam-feed video {
+            width: 100%;
+            height: auto;
+            border-radius: 15px; /* Make corners curved */
+            object-fit: cover; /* Ensure the video fits within the container */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="result-feed">
+              <div class="completion-circle" id="completion-circle">0%</div>
+            </div>
+            <div class="webcam-feed">
+                <div class="questions">Questions:</div>
+                <video id="webcam" autoplay></video>
+            </div>
+        </div>
+        <div style="" class="transcript-section">
+            <span class="questions">User Transcript Here</span>
+            <p id="transcript">Hello! My name is omkar. this is the ekyc webtool for automating the kyc process through AI, where it capture the images and voice and process into computer and analyze does the person is valid or not.</p>
+        </div>
+    </div>
+    <script>
+        function updateProgressCircle(percentage) {
+            const circle = document.getElementById('completion-circle');
+            circle.textContent = percentage + '%';
+            circle.style.background = `conic-gradient(#4caf50 ${percentage * 3.6}deg, #ddd ${percentage * 3.6}deg)`;
+        }
+
+        function startWebcam() {
+            const video = document.getElementById('webcam');
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.log("Something went wrong with the webcam: " + error);
+                    });
+            }
+        }
+
+        function updateTranscript(data) {
+            const transcript = document.getElementById('transcript');
+            transcript.textContent = `First Name: ${data.first_name}, Last Name: ${data.last_name}, Age: ${data.age}, Phone: ${data.phone}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            startWebcam();
+        });
+    </script>
+</body>
+</html>

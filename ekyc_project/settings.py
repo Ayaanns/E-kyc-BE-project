@@ -155,6 +155,16 @@ DATABASES = {
 }
 
 
+#mail setup and configuration here
+EMAIL_BACKEND = os.environ.get("E_BACKEND")
+EMAIL_HOST = os.environ.get("E_HOST")
+EMAIL_PORT = os.environ.get("E_PORT")
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("E_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("E_PSWD")
+SERVER_EMAIL = EMAIL_HOST_USER
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
