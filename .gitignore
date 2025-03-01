@@ -1,7 +1,7 @@
 env
 ekyc/__pycache__/
 ekyc_project/__pycache__/
-.history/
+.history
 D:\omkar\django_practice\ekyc_project\.history
 *.pyc
 .env
