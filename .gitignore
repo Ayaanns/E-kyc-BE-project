@@ -1,24 +1,56 @@
-env
-ekyc/__pycache__
-ekyc_project/__pycache__/*.pyc
 # Virtual Environment
 env/
 venv/
 
 # Python cache files
 __pycache__/
+ekyc/**/__pycache__/
+ekyc/*.pyc
+ekyc/*.pyo
+ekyc/**/*.pyc
+ekyc/**/*.pyo
 *.py[cod]
 *$py.class
-
-# VS Code history
-.history/
-.history
-.vscode/
+*.pyc
+*.pyo
+.Python
+*.so
 
 # Django
 *.log
+*.pot
+*.pyc
 db.sqlite3
+db.sqlite3-journal
 media/
+static/
+local_settings.py
+*.mo
+.coverage
+htmlcov/
 
 # Environment variables
 .env
+.env.local
+.env.*.local
+
+# IDE - VS Code
+.vscode/
+.history/
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Testing
+.coverage
+.tox/
+.pytest_cache/
+coverage.xml
+*.cover
