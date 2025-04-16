@@ -92,8 +92,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", 1))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+# filepath: d:\omkar\E-kyc-BE-project\ekyc_project\settings.py
 
+# filepath: d:\omkar\E-kyc-BE-project\ekyc_project\settings.py
+CSRF_TRUSTED_ORIGINS = [
+    'https://1091-103-124-140-56.ngrok-free.app',  # Add your ngrok domain here
+]
 
 # Application definition
 
@@ -142,7 +147,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ekyc_project.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {
@@ -167,14 +171,14 @@ SERVER_EMAIL = EMAIL_HOST_USER
 #EMAIL_FROM = os.environ.get("E_FROM")
 
 
-#mail setup and configuration here
-EMAIL_BACKEND = os.environ.get("E_BACKEND")
-EMAIL_HOST = os.environ.get("E_HOST")
-EMAIL_PORT = os.environ.get("E_PORT")
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("E_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("E_PSWD")
-SERVER_EMAIL = EMAIL_HOST_USER
+# #mail setup and configuration here
+# EMAIL_BACKEND = os.environ.get("E_BACKEND")
+# EMAIL_HOST = os.environ.get("E_HOST")
+# EMAIL_PORT = os.environ.get("E_PORT")
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get("E_USER")
+# EMAIL_HOST_PASSWORD = os.environ.get("E_PSWD")
+# SERVER_EMAIL = EMAIL_HOST_USER
 
 
 # Password validation

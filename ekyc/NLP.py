@@ -158,7 +158,6 @@ def get_user_info(stop_event, user_info):
             stop_event.set()
 
 def main():
-    # Create stop event first
     stop_event = threading.Event()
     user_info = UserInfo()
     
@@ -175,11 +174,15 @@ def main():
     info_thread.start()
 
     try:
-        # Wait for threads to complete or for user to interrupt
         info_thread.join()
-        print("Information collection complete. Press 'q' in the webcam window to exit.")
+        print("Information collection complete. Starting OCR process...")
         
-        # Keep the webcam running until 'q' is pressed
+        # Start OCR process
+        from .OCR import main as ocr_main
+        ocr_main()  # Execute OCR process
+        
+        print("OCR process complete. Press 'q' in the webcam window to exit.")
+        
         while not stop_event.is_set() and camera_thread.is_alive():
             time.sleep(0.1)
             

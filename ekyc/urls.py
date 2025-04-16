@@ -14,9 +14,4 @@ urlpatterns = [
     #login related routes
     path('login/', views.Login.as_view(), name="login"),
     path('signup/', views.signup_view, name="signup"),
-<<<<<<< HEAD
-    path('activate/<uidb64>/<token>', views.activate, name='activate'),  
-=======
-    path('verify/', views.verify_pin, name="verify_pin"),
->>>>>>> dev
 ]

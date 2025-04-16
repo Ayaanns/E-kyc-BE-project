@@ -289,3 +289,54 @@
 2025-02-17 16:21:35,597 - INFO -> into the signup page view
 2025-02-28 06:19:14,491 - INFO -> INTO THE process_video PAGE RIGHT NOW!
 >>>>>>> dev
+2025-04-15 13:01:18,840 - INFO -> into the signup page view
+2025-04-15 13:01:30,431 - INFO -> into the signup page view
+2025-04-15 13:05:05,801 - INFO -> into the signup page view
+2025-04-15 13:05:22,216 - INFO -> into the signup page view
+2025-04-15 13:05:43,006 - INFO -> into the signup page view
+2025-04-15 13:06:52,786 - INFO -> into the signup page view
+2025-04-15 13:07:04,382 - INFO -> into the signup page view
+2025-04-15 13:10:44,234 - INFO -> into the signup page view
+2025-04-15 13:10:58,413 - INFO -> into the signup page view
+2025-04-15 13:11:13,096 - INFO -> into the signup page view
+2025-04-15 13:21:39,210 - INFO -> into the signup page view
+2025-04-15 13:22:02,773 - INFO -> into the signup page view
+2025-04-16 16:24:56,632 - ERROR -> Error in NLP/OCR process: cannot access local variable 'image_path' where it is not associated with a value
+2025-04-16 16:47:23,496 - ERROR -> Error in NLP/OCR process: capture_image_with_guide() missing 1 required positional argument: 'frame'
+2025-04-16 16:52:11,791 - ERROR -> Error in OCR process: [WinError 2] The system cannot find the file specified: 'captured_aadhar.jpg'
+2025-04-16 16:52:18,193 - ERROR -> Error in OCR process: [WinError 2] The system cannot find the file specified: 'captured_aadhar.jpg'
+2025-04-16 16:52:21,984 - ERROR -> Error in OCR process: [WinError 2] The system cannot find the file specified: 'captured_aadhar.jpg'
+2025-04-16 16:52:25,442 - ERROR -> Error in OCR process: [WinError 2] The system cannot find the file specified: 'captured_aadhar.jpg'
+2025-04-16 16:53:15,362 - ERROR -> Error in OCR process: [WinError 2] The system cannot find the file specified: 'captured_aadhar.jpg'
+2025-04-16 17:25:00,203 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:00,442 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:00,627 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:00,826 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:01,029 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:01,239 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:01,433 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:01,981 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:02,258 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:02,535 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:02,755 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:03,136 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:03,614 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:03,813 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:03,993 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:04,194 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 17:25:05,748 - ERROR -> Error in OCR process: cannot schedule new futures after interpreter shutdown
+2025-04-16 18:39:52,490 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:53,487 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:54,486 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:55,483 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:56,497 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:57,494 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:58,490 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:39:59,485 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:00,487 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:01,492 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:02,490 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:03,491 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:04,478 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:05,488 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
+2025-04-16 18:40:06,485 - ERROR -> Error cleaning up temp files: [WinError 3] The system cannot find the path specified: 'D:\\omkar\\E-kyc-BE-project\\ekyc\\temp'
