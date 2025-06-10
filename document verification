@@ -1,0 +1,70 @@
+import re
+
+# Master data sample (from your verified database)
+master_data = {
+    "PAN": {
+        "number": "ABCDE1234F",
+        "name": "YASH TAPSE",
+        "dob": "2000-01-01"
+    },
+    "AADHAAR": {
+        "number": "123412341234",
+        "name": "YASH TAPSE",
+        "dob": "2000-01-01"
+    }
+}
+
+# Input data simulated from scanned document or user entry
+input_data = {
+    "document_type": "PAN",  # or "AADHAAR"
+    "number": "ABCDE1234F",
+    "name": "Yash Tapse",
+    "dob": "2000-01-01"
+}
+
+# Function to validate PAN format
+def validate_pan(pan):
+    return bool(re.fullmatch(r"[A-Z]{5}[0-9]{4}[A-Z]", pan))
+
+# Function to validate Aadhaar format
+def validate_aadhaar(aadhaar):
+    return bool(re.fullmatch(r"\d{12}", aadhaar))
+
+# Main verification function
+def verify_document(input_data, master_data):
+    doc_type = input_data["document_type"].upper()
+    doc_input = input_data.get("number", "").strip()
+    name_input = input_data.get("name", "").strip().upper()
+    dob_input = input_data.get("dob", "").strip()
+
+    if doc_type not in master_data:
+        return "❌ Document type not found in master data."
+
+    master_doc = master_data[doc_type]
+
+    # Validate document number format
+    if doc_type == "PAN" and not validate_pan(doc_input):
+        return "❌ Invalid PAN format."
+    elif doc_type == "AADHAAR" and not validate_aadhaar(doc_input):
+        return "❌ Invalid Aadhaar format."
+
+    # Compare details
+    match_number = doc_input == master_doc["number"]
+    match_name = name_input == master_doc["name"].upper()
+    match_dob = dob_input == master_doc["dob"]
+
+    if all([match_number, match_name, match_dob]):
+        return "✅ Document verification successful."
+    else:
+        result = "❌ Document verification failed:\n"
+        if not match_number:
+            result += f"- Document number mismatch\n"
+        if not match_name:
+            result += f"- Name mismatch\n"
+        if not match_dob:
+            result += f"- DOB mismatch\n"
+        return result
+
+# Run verification
+result = verify_document(input_data, master_data)
+print(result)
